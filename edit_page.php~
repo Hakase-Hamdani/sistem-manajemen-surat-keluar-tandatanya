@@ -14,12 +14,11 @@ $row_user = mysqli_fetch_array($sql_userdata);
 $id_penerbit = $row_user['id']; //ekstrak id sebagai id_penerbit
 
 //ambil data surat berdasarkan id_penerbit, untuk menampilkan surat dari penerbit yang login
-$sql_suratuser = mysqli_query($conn, "SELECT surat.berlaku_dari, surat.berlaku_sampai, surat.detail, surat.status, klasifikasi.nama AS jenis, klasifikasi.nomor FROM surat INNER JOIN  klasifikasi ON surat.id_jenis = klasifikasi.id WHERE surat.id_penerbit = '$id_penerbit'");
-$row_suratuser = mysqli_fetch_array($sql_suratuser);
+$sql_suratuser = mysqli_query($conn, "SELECT surat.berlaku_dari, surat.berlaku_sampai, surat.detail, surat.status, klasifikasi.nama AS jenis, klasifikasi.nomor FROM surat INNER JOIN  klasifikasi ON surat.id_jenis = klasifikasi.id WHERE surat.id_penerbit = $id_penerbit");
+//$row_suratuser = mysqli_fetch_array($sql_suratuser);
 
 //ambil data divisi untuk dropdown
 $sql_divisi = mysqli_query($conn, "SELECT * FROM divisi");
-$row_divisi = mysqli_fetch_array($sql_divisi);
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -118,23 +117,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					<th>Detail</th>
 					<th>Status</th>
 					<th>Jenis</th>
-					<th>Nomor</th>    	  		
+					<th>Nomor</th>
+					<th>Opsi</th>    	  		
     	  		</tr>
-    	  <?php if ($row_surat): ?> <!--Jika ada surat yang dimiliki oleh seorang user sebagai seorang penerbit-->		  		
+    	  <?php if ($row_suratuser): ?> <!--Jika ada surat yang dimiliki oleh seorang user sebagai seorang penerbit-->		  		
 				<?php
 				$no_sur=1;
 				while ($row_suratuser = mysqli_fetch_array($sql_suratuser)) {
 				?>
     	  		<tr>
-					<td></td>    	  		
+					<td><?php echo $row_suratuser['berlaku_dari']?></td>
+					<td><?php echo $row_suratuser['berlaku_sampai']?></td>
+					<td><?php echo $row_suratuser['detail']?></td>
+					<td><?php echo $row_suratuser['status']?></td>
+					<td><?php echo $row_suratuser['jenis']?></td>
+					<td><?php echo $row_suratuser['nomor']?></td>
+					<td><input type="button" value="Edit"> <br> <input type="button" value="Hapus"></td>    	  		
     	  		</tr>
-		  <?php else: ?> <!--Jika tidak ada surat-->
-		  		<tr>
-					<th><h3>Anda Masih Belum Menerbitkan Surat.</h3></th>    	  		
-    	  		</tr>
-		  <?php endif; ?>    	  	
-    	  		
-    	  </table>    
+    	  	</table>
+		  <?php } else: ?> <!--Jika tidak ada surat-->
+				<h3>Anda Masih Belum Menerbitkan Surat.</h3>    	  		
+		  <?php endif; ?>    	  	    
     </div>
 </body>
 </html>
