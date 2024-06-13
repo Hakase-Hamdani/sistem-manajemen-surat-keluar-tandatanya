@@ -9,9 +9,9 @@ $user_id = isset($_GET['id']) ? $_GET['id'] : "";
 $user_id = mysqli_real_escape_string($conn, $user_id);
 
 // Ambil data penerbit berdasarkan user_id, untuk menampilkan data user
-$sql_userdata = mysqli_query($conn, "SELECT * FROM penerbit WHERE id_user='$user_id'");
-$row_user = mysqli_fetch_array($sql_userdata);
-$id_penerbit = $row_user['id']; //ekstrak id sebagai id_penerbit
+$sql_penerbitdata = mysqli_query($conn, "SELECT * FROM penerbit WHERE id_user='$user_id'");
+$row_penerbit = mysqli_fetch_array($sql_penerbitdata);
+$id_penerbit = $row_penerbit['id']; //ekstrak id sebagai id_penerbit
 
 //ambil data surat berdasarkan id_penerbit, untuk menampilkan surat dari penerbit yang login
 $sql_suratuser = mysqli_query($conn, "SELECT surat.berlaku_dari, surat.berlaku_sampai, surat.detail, surat.status, klasifikasi.nama AS jenis, klasifikasi.nomor FROM surat INNER JOIN  klasifikasi ON surat.id_jenis = klasifikasi.id WHERE surat.id_penerbit = $id_penerbit");
@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $status = mysqli_real_escape_string($conn, $_POST['status']);
     $id_divisi = mysqli_real_escape_string($conn, $_POST['divisi']);
 
-    if ($row_user) {
+    if ($row_penerbit) {
         // If entry exists, update it
         $update_sql = "UPDATE penerbit SET id_divisi='$id_divisi', nama='$nama', NIP='$nip', jabatan='$jabatan', status='$status' WHERE id_user='$user_id'";
         if (mysqli_query($conn, $update_sql)) {
@@ -76,25 +76,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
 	 <div>	 
-	 <?php if ($row_user): ?> <!--Jika user sudah terdaftar sebagai penerbit-->
-    <h2>Halo, <u><?= $row_user['nama']; ?></u>. Anda login sebagai Admin.</h2>
+	 <?php if ($row_penerbit): ?> <!--Jika user sudah terdaftar sebagai penerbit-->
+    <h2>Halo, <u><?= $row_penerbit['nama']; ?></u>. Anda login sebagai Admin.</h2>
 	 <?php else: ?> <!--Jika user belum terdaftar sebagai penerbit-->
-    <h3>Edit/Tambah Data Anda Sebagai Admin</h3>
+	 <h3>Data tidak ditemukan, silahkan isi data Anda sebagai penerbit menggunakan form di bawah.<h3>    
+    <h3>Tambah Data Anda Sebagai Admin</h3>
 	 <?php endif; ?>
     <form method="POST">
         <label for="nama">Nama: </label>
-        <input type="text" id="nama" name="nama" value="<?php echo isset($row_user['nama']) ? $row_user['nama'] : ''; ?>" required><br><br>
+        <input type="text" id="nama" name="nama" value="<?php echo isset($row_penerbit['nama']) ? $row_penerbit['nama'] : ''; ?>" required><br><br>
         <label for="NIP">NIP: </label>
-        <input type="text" id="NIP" name="NIP" value="<?php echo isset($row_user['NIP']) ? $row_user['NIP'] : ''; ?>" required><br><br>
+        <input type="text" id="NIP" name="NIP" value="<?php echo isset($row_penerbit['NIP']) ? $row_penerbit['NIP'] : ''; ?>" required><br><br>
         <label for="jabatan">Jabatan: </label>
-        <input type="text" id="jabatan" name="jabatan" value="<?php echo isset($row_user['jabatan']) ? $row_user['jabatan'] : ''; ?>" required><br><br>
+        <input type="text" id="jabatan" name="jabatan" value="<?php echo isset($row_penerbit['jabatan']) ? $row_penerbit['jabatan'] : ''; ?>" required><br><br>
         <label for="options">Divisi:</label>
     	  <select id="options" name="divisi">
     		<?php
    	   $no_div = 1;
     		while ($row_divisi = mysqli_fetch_array($sql_divisi)) {
         		$selected = '';
-        		if (isset($row_user['id_divisi']) && $row_user['id_divisi'] == $row_divisi['id']) {
+        		if (isset($row_penerbit['id_divisi']) && $row_penerbit['id_divisi'] == $row_divisi['id']) {
             $selected = 'selected';
 	        	}
     		?>        		
@@ -109,21 +110,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		  <br><br>
     	  <label for="status">Status: </label>
 		  <select id="status" name="status">
-    			<option value="1" <?php echo (isset($row_user['status']) && $row_user['status'] == 1) ? 'selected' : ''; ?>>Aktif</option>
-    		 	<option value="0" <?php echo (isset($row_user['status']) && $row_user['status'] == 0) ? 'selected' : ''; ?>>Non-Aktif</option>
+    			<option value="1" <?php echo (isset($row_penerbit['status']) && $row_penerbit['status'] == 1) ? 'selected' : ''; ?>>Aktif</option>
+    		 	<option value="0" <?php echo (isset($row_penerbit['status']) && $row_penerbit['status'] == 0) ? 'selected' : ''; ?>>Non-Aktif</option>
 		  </select><br><br>
-    	  <input type="submit" value="Update">
+    	  <input type="submit" value="Update Data"><br>
     </form>
-    <h2>Data Anda</h2>
-    <?php if ($row_user): ?> <!--Jika user sudah terdaftar sebagai penerbit-->
-        <p>Nama: <?php echo $row_user['nama']; ?></p>
-        <p>NIP: <?php echo $row_user['NIP']; ?></p>
-        <p>Jabatan: <?php echo $row_user['jabatan']; ?></p>
-        <p>Divisi: <?php echo (isset($row_user['id_divisi']) && $row_user['id_divisi'] == $row_divisi['id']) ? $row_divisi['nama_divisi'] . "/" . $row_divisi['kode_divisi'] : ''; ?></p>
-        <p>Status: <?php echo (isset($row_user['status']) && $row_user['status'] == 1) ? 'Aktif' : "Non-Aktif"; ?></p>
-    <?php else: ?> <!--Jika user belum terdaftar sebagai penerbit-->
-        <p>Data tidak ditemukan, silahkan isi data Anda sebagai penerbit menggunakan form di atas.</p>
-    <?php endif; ?>
     </div>
     <div>    	  
     	  <table>		  		
