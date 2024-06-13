@@ -30,19 +30,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($row_user) {
         // If entry exists, update it
-        $update_sql = "UPDATE penerbit SET, id_divisi='$id_divisi', nama='$nama', NIP='$nip', jabatan='$jabatan', status='$status' WHERE id_user='$user_id'";
+        $update_sql = "UPDATE penerbit SET id_divisi='$id_divisi', nama='$nama', NIP='$nip', jabatan='$jabatan', status='$status' WHERE id_user='$user_id'";
         if (mysqli_query($conn, $update_sql)) {
             echo "Data updated successfully.";
+            header("Location: " . $_SERVER['REQUEST_URI']);
+        		exit;
         } else {
             echo "Error updating data: " . mysqli_error($conn);
+            header("Location: " . $_SERVER['REQUEST_URI']);
+        		exit;
         }
     } else {
         // If entry does not exist, insert a new one
-        $insert_sql = "INSERT INTO penerbit (id_user, nama, NIP, jabatan, status) VALUES ('$user_id', '$id_divisi', '$nama', '$nip', '$jabatan', '$status')";
+        $insert_sql = "INSERT INTO penerbit (id_user, id_divisi, nama, NIP, jabatan, status) VALUES ('$user_id', '$id_divisi', '$nama', '$nip', '$jabatan', '$status')";
         if (mysqli_query($conn, $insert_sql)) {
             echo "Data inserted successfully.";
+            header("Location: " . $_SERVER['REQUEST_URI']);
+        		exit;
         } else {
             echo "Error inserting data: " . mysqli_error($conn);
+            header("Location: " . $_SERVER['REQUEST_URI']);
+        		exit;
         }
     }
 }
@@ -74,29 +82,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h3>Edit/Tambah Data Anda Sebagai Admin</h3>
 	 <?php endif; ?>
     <form method="POST">
-        <label for="nama">Nama:</label><br>
+        <label for="nama">Nama: </label>
         <input type="text" id="nama" name="nama" value="<?php echo isset($row_user['nama']) ? $row_user['nama'] : ''; ?>" required><br><br>
-        <label for="NIP">NIP:</label><br>
+        <label for="NIP">NIP: </label>
         <input type="text" id="NIP" name="NIP" value="<?php echo isset($row_user['NIP']) ? $row_user['NIP'] : ''; ?>" required><br><br>
-        <label for="jabatan">Jabatan</label><br>
+        <label for="jabatan">Jabatan: </label>
         <input type="text" id="jabatan" name="jabatan" value="<?php echo isset($row_user['jabatan']) ? $row_user['jabatan'] : ''; ?>" required><br><br>
-        <label for="status">Status:</label><br>
-        <input type="number" id="status" name="status" value="<?php echo isset($row_user['status']) ? $row_user['status'] : ''; ?>" required><br><br>
-        <label for="options">Divisi</label>
+        <label for="options">Divisi:</label>
     	  <select id="options" name="divisi">
-				<?php
-					$no_div = 1;
-					while ($row_divisi = mysqli_fetch_array($sql_divisi)) {
-				?>        		
-    			<option value="<?php echo $row_divisi['id']; ?>">
-        			<?php echo $row_divisi['nama_divisi'] . "/" . $row_divisi['kode_divisi']; ?>
-    			</option>
-				<?php
-    			$no_div++;
-				}
-				?>
-    	  </select>
-    	  <br><br>
+    		<?php
+   	   $no_div = 1;
+    		while ($row_divisi = mysqli_fetch_array($sql_divisi)) {
+        		$selected = '';
+        		if (isset($row_user['id_divisi']) && $row_user['id_divisi'] == $row_divisi['id']) {
+            $selected = 'selected';
+	        	}
+    		?>        		
+    		<option value="<?php echo $row_divisi['id']; ?>" <?php echo $selected; ?>>
+         <?php echo $row_divisi['nama_divisi'] . "/" . $row_divisi['kode_divisi']; ?>
+    	   </option>
+    		<?php
+    		$no_div++;
+    		}
+    		?>
+		  </select>
+		  <br><br>
+    	  <label for="status">Status: </label>
+		  <select id="status" name="status">
+    			<option value="1" <?php echo (isset($row_user['status']) && $row_user['status'] == 1) ? 'selected' : ''; ?>>Aktif</option>
+    		 	<option value="0" <?php echo (isset($row_user['status']) && $row_user['status'] == 0) ? 'selected' : ''; ?>>Non-Aktif</option>
+		  </select><br><br>
     	  <input type="submit" value="Update">
     </form>
     <h2>Data Anda</h2>
@@ -104,7 +119,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p>Nama: <?php echo $row_user['nama']; ?></p>
         <p>NIP: <?php echo $row_user['NIP']; ?></p>
         <p>Jabatan: <?php echo $row_user['jabatan']; ?></p>
-        <p>Status: <?php echo $row_user['status']; ?></p>
+        <p>Divisi: <?php echo (isset($row_user['id_divisi']) && $row_user['id_divisi'] == $row_divisi['id']) ? $row_divisi['nama_divisi'] . "/" . $row_divisi['kode_divisi'] : ''; ?></p>
+        <p>Status: <?php echo (isset($row_user['status']) && $row_user['status'] == 1) ? 'Aktif' : "Non-Aktif"; ?></p>
     <?php else: ?> <!--Jika user belum terdaftar sebagai penerbit-->
         <p>Data tidak ditemukan, silahkan isi data Anda sebagai penerbit menggunakan form di atas.</p>
     <?php endif; ?>
@@ -120,7 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					<th>Nomor</th>
 					<th>Opsi</th>    	  		
     	  		</tr>
-    	  <?php if ($row_suratuser): ?> <!--Jika ada surat yang dimiliki oleh seorang user sebagai seorang penerbit-->		  		
+    	  <?php if (mysqli_num_rows($sql_suratuser) > 0): ?> <!--Jika ada surat yang dimiliki oleh seorang user sebagai seorang penerbit-->		  		
 				<?php
 				$no_sur=1;
 				while ($row_suratuser = mysqli_fetch_array($sql_suratuser)) {
@@ -132,7 +148,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					<td><?php echo $row_suratuser['status']?></td>
 					<td><?php echo $row_suratuser['jenis']?></td>
 					<td><?php echo $row_suratuser['nomor']?></td>
-					<td><input type="button" value="Edit"> <br> <input type="button" value="Hapus"></td>    	  		
+					<td><a href="" >Edit <br> <a href="" >Hapus</td>    	  		
     	  		</tr>
     	  	</table>
 		  <?php } else: ?> <!--Jika tidak ada surat-->
