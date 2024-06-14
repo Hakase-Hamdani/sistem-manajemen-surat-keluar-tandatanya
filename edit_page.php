@@ -82,6 +82,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	 <h3>Data tidak ditemukan, silahkan isi data Anda sebagai penerbit menggunakan form di bawah.<h3>    
     <h3>Tambah Data Anda Sebagai Admin</h3>
 	 <?php endif; ?>
+<div>
+    		<h4>Menu Administrasi</h4>
+			<a href="admin_edit-user.php" >Edit Data User | </a>
+			<a href="" >Edit Data Penerbit | </a>
+			<a href="" >Edit Data Klasifikasi Surat | </a>
+			<a href="" >Edit Data Tujuan</a>
+			<br><br> 
+    </div>
+    </div>
+    <h4>Edit data Pribadi:</h4>
     <form method="POST">
         <label for="nama">Nama: </label>
         <input type="text" id="nama" name="nama" value="<?php echo isset($row_penerbit['nama']) ? $row_penerbit['nama'] : ''; ?>" required><br><br>
@@ -116,7 +126,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     	  <input type="submit" value="Update Data"><br>
     </form>
     </div>
-    <div>    	  
+    <div>
+    	  <h4>Surat yang anda terbitkan:</h4>
+    	  <a href="" >Tambahkan Surat    	  
     	  <table>		  		
 		  		<tr>
 					<th>Berlaku Dari</th>
@@ -136,14 +148,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					<td><?php echo $row_suratuser['berlaku_dari']?></td>
 					<td><?php echo $row_suratuser['berlaku_sampai']?></td>
 					<td><?php echo $row_suratuser['detail']?></td>
-					<td><?php echo $row_suratuser['status']?></td>
+					<td><?php echo $row_suratuser['status'] == 1 ? 'Disetujui' : 'Belum Disetujui' ?></td>
 					<td><?php echo $row_suratuser['jenis']?></td>
 					<td><?php echo $row_suratuser['nomor']?></td>
 					<td><a href="" >Edit <br> <a href="" >Hapus</td>    	  		
     	  		</tr>
     	  	</table>
 		  <?php } else: ?> <!--Jika tidak ada surat-->
-				<h3>Anda Masih Belum Menerbitkan Surat.</h3>    	  		
+				<h4>Anda Masih Belum Menerbitkan Surat.</h4>    	  		
 		  <?php endif; ?>    	  	    
     </div>
 </body>

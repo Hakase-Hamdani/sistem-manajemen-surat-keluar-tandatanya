@@ -32,14 +32,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else if ($row['level'] == 1) {
                 header("Location: edit_page.php?id=" . $row['id']);
                 exit();
-            }
-        }
+            } else if ($row['level'] == 2) {
+            	 header("Location: atasan_page.php?id=" . $row['id']);
+                exit();
+        		}
     } else {
         echo "Invalid username or password.";
     }
 
     $result->free();
     $conn->close();
+	 }
 }
 ?>
 
@@ -49,6 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="themes/midnight-green.css">
     <title>Login</title>
 </head>
 <body>
