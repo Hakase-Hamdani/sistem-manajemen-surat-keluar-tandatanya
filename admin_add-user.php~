@@ -1,0 +1,138 @@
+<?php
+session_start();
+include 'db.php';
+
+
+//ambil data surat berdasarkan id_penerbit, untuk menampilkan surat dari penerbit yang login
+$sql_user = mysqli_query($conn, "SELECT * FROM user");
+//$row_user = mysqli_fetch_array($sql_user);
+
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nama = mysqli_real_escape_string($conn, $_POST['nama']);
+    $nip = mysqli_real_escape_string($conn, $_POST['NIP']);
+    $jabatan = mysqli_real_escape_string($conn, $_POST['jabatan']);
+    $status = mysqli_real_escape_string($conn, $_POST['status']);
+    $id_divisi = mysqli_real_escape_string($conn, $_POST['divisi']);
+
+    if ($row_penerbit) {
+        // If entry exists, update it
+        $update_sql = "UPDATE penerbit SET id_divisi='$id_divisi', nama='$nama', NIP='$nip', jabatan='$jabatan', status='$status' WHERE id_user='$user_id'";
+        if (mysqli_query($conn, $update_sql)) {
+            echo "Data updated successfully.";
+            header("Location: " . $_SERVER['REQUEST_URI']);
+        		exit;
+        } else {
+            echo "Error updating data: " . mysqli_error($conn);
+            header("Location: " . $_SERVER['REQUEST_URI']);
+        		exit;
+        }
+    } else {
+        // If entry does not exist, insert a new one
+        $insert_sql = "INSERT INTO penerbit (id_user, id_divisi, nama, NIP, jabatan, status) VALUES ('$user_id', '$id_divisi', '$nama', '$nip', '$jabatan', '$status')";
+        if (mysqli_query($conn, $insert_sql)) {
+            echo "Data inserted successfully.";
+            header("Location: " . $_SERVER['REQUEST_URI']);
+        		exit;
+        } else {
+            echo "Error inserting data: " . mysqli_error($conn);
+            header("Location: " . $_SERVER['REQUEST_URI']);
+        		exit;
+        }
+    }
+}
+?>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="themes/midnight-green.css">
+    <title>Edit Data User</title>
+    <style>
+        col.max-width {
+            max-width: 150px; /* Set the maximum width */
+        }
+        td {
+            word-wrap: break-word; /* Ensure content wraps within the cell */
+        }
+    </style>
+</head>
+<body>
+	 <div>	 
+	 <h3>Anda Sedang Menambah Data User</h3>
+    <form method="POST">
+        <label for="nama">Username: </label>
+        <input type="text" id="nama" name="nama" value="<?php echo isset($row_penerbit['nama']) ? $row_penerbit['nama'] : ''; ?>" required><br><br>
+        <label for="NIP">NIP: </label>
+        <input type="text" id="NIP" name="NIP" value="<?php echo isset($row_penerbit['NIP']) ? $row_penerbit['NIP'] : ''; ?>" required><br><br>
+        <label for="jabatan">Jabatan: </label>
+        <input type="text" id="jabatan" name="jabatan" value="<?php echo isset($row_penerbit['jabatan']) ? $row_penerbit['jabatan'] : ''; ?>" required><br><br>
+        <label for="options">Divisi:</label>
+    	  <select id="options" name="divisi">
+    		<?php
+   	   $no_div = 1;
+    		while ($row_divisi = mysqli_fetch_array($sql_divisi)) {
+        		$selected = '';
+        		if (isset($row_penerbit['id_divisi']) && $row_penerbit['id_divisi'] == $row_divisi['id']) {
+            $selected = 'selected';
+	        	}
+    		?>        		
+    		<option value="<?php echo $row_divisi['id']; ?>" <?php echo $selected; ?>>
+         <?php echo $row_divisi['nama_divisi'] . "/" . $row_divisi['kode_divisi']; ?>
+    	   </option>
+    		<?php
+    		$no_div++;
+    		}
+    		?>
+		  </select>
+		  <br><br>
+    	  <label for="status">Status: </label>
+		  <select id="status" name="status">
+    			<option value="1" <?php echo (isset($row_penerbit['status']) && $row_penerbit['status'] == 1) ? 'selected' : ''; ?>>Aktif</option>
+    		 	<option value="0" <?php echo (isset($row_penerbit['status']) && $row_penerbit['status'] == 0) ? 'selected' : ''; ?>>Non-Aktif</option>
+		  </select><br><br>
+    	  <input type="submit" value="Update Data"><br>
+    </form>
+    </div>
+    <div>
+    	  <h3>Surat yang anda terbitkan:</h3>
+    	  <a href="" >Tambahkan Surat    	  
+    	  <table>		  		
+		  		<tr>
+					<th>Berlaku Dari</th>
+					<th>Berlaku Sampai</th>
+					<th>Detail</th>
+					<th>Status</th>
+					<th>Jenis</th>
+					<th>Nomor</th>
+					<th>Opsi</th>    	  		
+    	  		</tr>
+    	  <?php if (mysqli_num_rows($sql_user) > 0): ?> <!--Jika ada surat yang dimiliki oleh seorang user sebagai seorang penerbit-->		  		
+				<?php
+				$no_sur=1;
+				while ($row_user = mysqli_fetch_array($sql_user)) {
+				?>
+    	  		<tr>
+					<td><?php echo $row_user['berlaku_dari']?></td>
+					<td><?php echo $row_user['berlaku_sampai']?></td>
+					<td><?php echo $row_user['detail']?></td>
+					<td><?php echo $row_user['status']?></td>
+					<td><?php echo $row_user['jenis']?></td>
+					<td><?php echo $row_user['nomor']?></td>
+					<td><a href="" >Edit <br> <a href="" >Hapus</td>    	  		
+    	  		</tr>
+    	  	</table>
+		  <?php } else: ?> <!--Jika tidak ada surat-->
+				<h4>Anda Masih Belum Menerbitkan Surat.</h4>    	  		
+		  <?php endif; ?>    	  	    
+    </div>
+</body>
+</html>
+
+<?php
+$conn->close();
+?>
