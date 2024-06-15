@@ -128,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     <div>
     	  <h4>Surat yang anda terbitkan:</h4>
-    	  <a href="" >Tambahkan Surat    	  
+    	  <a href="input_letter.php?id=<?php echo $id_penerbit;?>">Tambahkan Surat</a><br> 	  
     	  <table>		  		
 		  		<tr>
 					<th>Berlaku Dari</th>
@@ -151,10 +151,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					<td><?php echo $row_suratuser['status'] == 1 ? 'Disetujui' : 'Belum Disetujui' ?></td>
 					<td><?php echo $row_suratuser['jenis']?></td>
 					<td><?php echo $row_suratuser['nomor']?></td>
-					<td><a href="" >Edit <br> <a href="" >Hapus</td>    	  		
+					<td><?php echo $row_suratuser['status'] == 0 ? '---' : '<a href="edit_surat.php">Edit</a> <br>' ?></td>    	  		
     	  		</tr>
+    	  		<?php } else: ?> <!--Jika tidak ada surat-->
     	  	</table>
-		  <?php } else: ?> <!--Jika tidak ada surat-->
 				<h4>Anda Masih Belum Menerbitkan Surat.</h4>    	  		
 		  <?php endif; ?>    	  	    
     </div>

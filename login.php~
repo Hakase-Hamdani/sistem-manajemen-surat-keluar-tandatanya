@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = mysqli_real_escape_string($conn, $username);
     $password = mysqli_real_escape_string($conn, $password);
 
-    $sql = "SELECT * FROM user WHERE user_name = '$username' AND password = '$password'";
+    $sql = "SELECT * FROM user WHERE username = '$username' AND password = '$password'";
     $result = $conn->query($sql);
 
     if ($result && $result->num_rows > 0) {
@@ -27,13 +27,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         } else if ($row['status'] == 1) {
             if ($row['level'] == 0) {
-                header("Location: plain_page.php?id=" . $row['id']);
+                header("Location: plain_page.php?id=" . $row['id'] . "&?level=" . $row['level']);
                 exit();
             } else if ($row['level'] == 1) {
-                header("Location: edit_page.php?id=" . $row['id']);
+                header("Location: edit_page.php?id=" . $row['id'] . "&?level=" . $row['level']);
                 exit();
             } else if ($row['level'] == 2) {
-            	 header("Location: atasan_page.php?id=" . $row['id']);
+            	 header("Location: atasan_page.php?id=" . $row['id'] . "&?level=" . $row['level']);
                 exit();
         		}
     } else {
