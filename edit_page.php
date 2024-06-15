@@ -163,16 +163,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					<td>
 					    <?php if ($row_level['level'] == 2){ ?>
 							<?php if ($row_suratuser['status'] == 0) { ?>
-								<a href="edit_letter.php?id=' <?php $row_suratuser['id']?>'">Edit</a> <br>
-								<a href="delete_letter.php?id=' <?php $row_suratuser['id']?>'">Hapus</a> <br>
-								<a href="approve_letter.php?id=' <?php $row_suratuser['id']?>'">Setujui</a>
+								<a href="edit_letter.php?id=<?php echo $row_suratuser['id']?>">Edit</a> <br>
+								<a href="delete_letter.php?id=<?php echo $row_suratuser['id']?>">Hapus</a> <br>
+								<a href="approve_letter.php?id=<?php echo $row_suratuser['id']?>">Setujui</a>
 							<?php } else { ?>
 								<p>---</p>
 							<?php } ?>
 						<?php } else { ?>
 							<?php if ($row_suratuser['status'] == 0) { ?>
-								<a href="edit_letter.php?id=' <?php $row_suratuser['id']?>'">Edit</a> <br>
-								<a href="delete_letter.php?id=' <?php $row_suratuser['id']?>'">Hapus</a> <br>
+								<a href="edit_letter.php?id=<?php echo $row_suratuser['id']?>">Edit</a> <br>
+								<a href="delete_letter.php?id=<?php echo $row_suratuser['id']?>">Hapus</a> <br>
 							<?php } else { ?>
 								<p>---</p>
 							<?php } ?>

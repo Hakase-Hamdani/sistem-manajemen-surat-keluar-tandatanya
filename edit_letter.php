@@ -11,7 +11,12 @@ $row_level = mysqli_fetch_array($check_level);
 // Sanitasi user ID
 $id_penerbit = mysqli_real_escape_string($conn, $id_penerbit);
 
-$sql_suratuser = mysqli_query($conn, "SELECT surat.berlaku_dari, surat.berlaku_sampai, surat.detail, surat.status, klasifikasi.nama AS jenis, klasifikasi.nomor FROM surat INNER JOIN  klasifikasi ON surat.id_jenis = klasifikasi.id WHERE surat.id_penerbit = '$id_penerbit'");
+//ambil data surat berdasarkan id_penerbit, untuk menampilkan surat dari penerbit yang login
+if ($row_level['level'] != 2){
+	$sql_suratuser = mysqli_query($conn, "SELECT surat.id, surat.berlaku_dari, surat.berlaku_sampai, surat.detail, surat.status, klasifikasi.nama AS jenis, klasifikasi.nomor FROM surat INNER JOIN  klasifikasi ON surat.id_jenis = klasifikasi.id WHERE surat.id_penerbit = $id_penerbit");	
+} else {
+	$sql_suratuser = mysqli_query($conn, "SELECT surat.id, surat.berlaku_dari, surat.berlaku_sampai, surat.detail, surat.status, klasifikasi.nama AS jenis, klasifikasi.nomor FROM surat INNER JOIN  klasifikasi ON surat.id_jenis = klasifikasi.id");
+}
 
 //ambil data tujuan untuk dropdown
 $sql_tujuan = mysqli_query($conn, "SELECT * FROM tujuan");
@@ -30,7 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     	$insert_surat = "INSERT INTO surat (id_penerbit, id_tujuan, id_jenis, berlaku_dari, berlaku_sampai, detail, status) VALUES ('$id_penerbit', '$id_tujuan', '$klasifikasi', '$tgl_berlaku', '$tgl_sampai', '$detail', '0')";
 	 } else {
     	$insert_surat = "INSERT INTO surat (id_penerbit, id_tujuan, id_jenis, berlaku_dari, berlaku_sampai, detail, status) VALUES ('$id_penerbit', '$id_tujuan', '$klasifikasi', '$tgl_berlaku', '$tgl_sampai', '$detail', '$status')";
-	 }	 	 
+	 }
+	 	 	 
 	 $insert = mysqli_query($conn, $insert_surat);
 	 header("Location: " . $_SERVER['REQUEST_URI']);
 	 exit;
@@ -124,7 +130,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					<td><?php echo $row_suratuser['status'] == 1 ? 'Disetujui' : 'Belum Disetujui' ?></td>
 					<td><?php echo $row_suratuser['jenis']?></td>
 					<td><?php echo $row_suratuser['nomor']?></td>
-					<td><?php echo $row_suratuser['status'] == 0 ? '---' : '<a href="edit_letter.php">Edit</a> <br> <a href="hapus_surat.php">Hapus</a>' ?></td>    	  		
+					<td>
+					    <?php if ($row_level['level'] == 2){ ?>
+							<?php if ($row_suratuser['status'] == 0) { ?>
+								<a href="edit_letter.php?id=<?php echo $row_suratuser['id']?>">Edit</a> <br>
+								<a href="delete_letter.php?id=<?php echo $row_suratuser['id']?>">Hapus</a> <br>
+								<a href="approve_letter.php?id=<?php echo $row_suratuser['id']?>">Setujui</a>
+							<?php } else { ?>
+								<p>---</p>
+							<?php } ?>
+						<?php } else { ?>
+							<?php if ($row_suratuser['status'] == 0) { ?>
+								<a href="edit_letter.php?id=<?php echo $row_suratuser['id']?>">Edit</a> <br>
+								<a href="delete_letter.php?id=<?php echo $row_suratuser['id']?>">Hapus</a> <br>
+							<?php } else { ?>
+								<p>---</p>
+							<?php } ?>
+    					<?php } ?>
+					</td>
     	  		</tr>
     	  		<?php } else: ?> <!--Jika tidak ada surat-->
     	  	</table>		  
