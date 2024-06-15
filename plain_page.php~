@@ -143,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					<td><?php echo $row_suratuser['status'] == 1 ? 'Disetujui' : 'Belum Disetujui' ?></td>
 					<td><?php echo $row_suratuser['jenis']?></td>
 					<td><?php echo $row_suratuser['nomor']?></td>
-					<td><?php echo $row_suratuser['status'] == 0 ? '---' : '<a href="edit_surat.php">Edit</a> <br> <a href="hapus_surat.php">Hapus</a>' ?></td>    	  		
+					<td><?php echo $row_suratuser['status'] == 0 ? '---' : '<a href="edit_letter.php">Edit</a> <br> <a href="hapus_surat.php">Hapus</a>' ?></td>    	  		
     	  		</tr>
     	  		<?php } else: ?> <!--Jika tidak ada surat-->
     	  	</table>
