@@ -24,8 +24,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tgl_berlaku = mysqli_real_escape_string($conn, $_POST['tgl_berlaku']);
     $tgl_sampai = mysqli_real_escape_string($conn, $_POST['tgl_sampai']);
     $detail = mysqli_real_escape_string($conn, $_POST['detail']);
-
-	 $insert_surat = "INSERT INTO surat (id_penerbit, id_tujuan, id_jenis, berlaku_dari, berlaku_sampai, detail, status) VALUES ('$id_penerbit', '$id_tujuan', '$klasifikasi', '$tgl_berlaku', '$tgl_sampai', '$detail', '0')";	 
+    $status = mysqli_real_escape_string($conn, $_POST['status']);
+    
+    if ($row_level['level'] != 2) {
+    	$insert_surat = "INSERT INTO surat (id_penerbit, id_tujuan, id_jenis, berlaku_dari, berlaku_sampai, detail, status) VALUES ('$id_penerbit', '$id_tujuan', '$klasifikasi', '$tgl_berlaku', '$tgl_sampai', '$detail', '0')";
+	 } else {
+    	$insert_surat = "INSERT INTO surat (id_penerbit, id_tujuan, id_jenis, berlaku_dari, berlaku_sampai, detail, status) VALUES ('$id_penerbit', '$id_tujuan', '$klasifikasi', '$tgl_berlaku', '$tgl_sampai', '$detail', '$status')";
+	 }
+	 	 	 
 	 $insert = mysqli_query($conn, $insert_surat);
 	 header("Location: " . $_SERVER['REQUEST_URI']);
 	 exit;
@@ -85,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <textarea id="detail" name="detail" rows="8" cols="20"></textarea>
 		  <br><br>
     	  <label for="status">Status: </label>
-		  <?php if ($row_level['level'] == 3):  ?>		  
+		  <?php if ($row_level['level'] == 2):  ?>		  
 		  <select id="status" name="status">
     			<option value="1" <?php echo (isset($row_penerbit['status']) && $row_penerbit['status'] == 1) ? 'selected' : ''; ?>>Aktif</option>
     		 	<option value="0" <?php echo (isset($row_penerbit['status']) && $row_penerbit['status'] == 0) ? 'selected' : ''; ?>>Non-Aktif</option>
@@ -119,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					<td><?php echo $row_suratuser['status'] == 1 ? 'Disetujui' : 'Belum Disetujui' ?></td>
 					<td><?php echo $row_suratuser['jenis']?></td>
 					<td><?php echo $row_suratuser['nomor']?></td>
-					<td><?php echo $row_suratuser['status'] == 0 ? '---' : '<a href="edit_surat.php">Edit</a> <br>' ?></td>    	  		
+					<td><?php echo $row_suratuser['status'] == 0 ? '---' : '<a href="edit_surat.php">Edit</a> <br> <a href="hapus_surat.php">Hapus</a>' ?></td>    	  		
     	  		</tr>
     	  		<?php } else: ?> <!--Jika tidak ada surat-->
     	  	</table>		  

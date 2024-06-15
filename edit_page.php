@@ -7,6 +7,9 @@ $user_id = isset($_GET['id']) ? $_GET['id'] : "";
 
 // Sanitasi user ID
 $user_id = mysqli_real_escape_string($conn, $user_id);
+//cek level user
+$check_level = "SELECT level FROM uswr WHERE id = '$user_id'";
+$row_level = mysqli_fetch_array($check_level);
 
 // Ambil data penerbit berdasarkan user_id, untuk menampilkan data user
 $sql_penerbitdata = mysqli_query($conn, "SELECT * FROM penerbit WHERE id_user='$user_id'");
@@ -77,12 +80,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 	 <div>	 
 	 <?php if ($row_penerbit): ?> <!--Jika user sudah terdaftar sebagai penerbit-->
-    <h2>Halo, <u><?= $row_penerbit['nama']; ?></u>. Anda login sebagai Admin.</h2>
+    <h2>Halo, <u><?php $row_penerbit['nama']; ?></u>. Anda login sebagai <?php echo ($row_level['level'] == 0) ? 'User' : (($row_level['level'] == 1) ? 'Admin' : 'Pimpinan'); ?> </h2>
 	 <?php else: ?> <!--Jika user belum terdaftar sebagai penerbit-->
 	 <h3>Data tidak ditemukan, silahkan isi data Anda sebagai penerbit menggunakan form di bawah.<h3>    
     <h3>Tambah Data Anda Sebagai Admin</h3>
 	 <?php endif; ?>
-<div>
+	 <?php if($row_level['level'] == 1): { ?> 	 
+	 <div>
     		<h4>Menu Administrasi</h4>
 			<a href="admin_edit-user.php" >Edit Data User | </a>
 			<a href="" >Edit Data Penerbit | </a>
@@ -90,6 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			<a href="" >Edit Data Tujuan</a>
 			<br><br> 
     </div>
+    <?php endif; ?>
     </div>
     <h4>Edit data Pribadi:</h4>
     <form method="POST">
@@ -151,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 					<td><?php echo $row_suratuser['status'] == 1 ? 'Disetujui' : 'Belum Disetujui' ?></td>
 					<td><?php echo $row_suratuser['jenis']?></td>
 					<td><?php echo $row_suratuser['nomor']?></td>
-					<td><?php echo $row_suratuser['status'] == 0 ? '---' : '<a href="edit_surat.php">Edit</a> <br>' ?></td>    	  		
+					<td><?php echo $row_suratuser['status'] == 0 ? '---' : '<a href="edit_surat.php">Edit</a> <br> <a href="hapus_surat.php">Hapus</a>' ?></td>    	  		
     	  		</tr>
     	  		<?php } else: ?> <!--Jika tidak ada surat-->
     	  	</table>

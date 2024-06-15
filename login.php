@@ -26,16 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: 404.php");
             exit();
         } else if ($row['status'] == 1) {
-            if ($row['level'] == 0) {
-                header("Location: plain_page.php?id=" . $row['id']);
-                exit();
-            } else if ($row['level'] == 1) {
-                header("Location: edit_page.php?id=" . $row['id']);
-                exit();
-            } else if ($row['level'] == 2) {
-            	 header("Location: atasan_page.php?id=" . $row['id']);
-                exit();
-        		}
+            header("Location: edit_page.php?id=" . $row['id']);
+            exit();       
     } else {
         echo "Invalid username or password.";
     }
