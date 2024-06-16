@@ -223,7 +223,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <p><a href="edit_tujuan.php?id=<?php echo $row_tujuandaftar['id']?>">Edit</a> </p>
                             <p><a href="delete_tujuan.php?id=<?php echo $row_tujuandaftar['id']?>">Hapus</a> </p>
                         <?php } else { ?>
-                            <p><a href="edit_tujuan.php?id=<?php echo $row_tujuandaftar['id']?>">Edit</a> </p>
+                            <p><a href="edit_letter.php?id=<?php echo $row_tujuandaftar['id']?>">Edit</a> </p>
                         <?php } ?>
                     </td>
                 </tr>

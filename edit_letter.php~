@@ -50,29 +50,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <form method="POST">                
         <label for="options">Tujuan:</label>
     	  <select id="options" name="tujuan">
-			<?php
-			while ($row_tujuan = mysqli_fetch_array($sql_tujuan)) {
-    		$selected = ($row_surat['id_tujuan'] == $row_tujuan['id']) ? 'selected' : '';
-			?>
-    		<option value="<?php echo $row_tujuan['id']; ?>" <?php echo $selected; ?>>
-        	<?php echo $row_tujuan['institusi'] . " / " . $row_tujuan['orang'] . " / " . $row_tujuan['jabatan'] . " / " . $row_tujuan['alamat']; ?>
-    		</option>
-			<?php
-			}
-			?>
-			</select>
-			<br><br>
-		   <label for="options">Klasifikasi:</label>
-		   <select id="options" name="klasifikasi">
-			<?php while ($row_klasifikasi = mysqli_fetch_array($sql_klasifikasi)){ 
-    		$selected = ($row_surat['id_jenis'] == $row_klasifikasi['id']) ? 'selected' : '';
-			?> 
-    		<option value="<?php echo $row_klasifikasi['id'] ?>" <?php echo $selected; ?>>
+<?php
+while ($row_tujuan = mysqli_fetch_array($sql_tujuan)) {
+    $selected = ($row_surat['id_tujuan'] == $row_tujuan['id']) ? 'selected' : '';
+?>
+    <option value="<?php echo $row_tujuan['id']; ?>" <?php echo $selected; ?>>
+        <?php echo $row_tujuan['institusi'] . " / " . $row_tujuan['orang'] . " / " . $row_tujuan['jabatan'] . " / " . $row_tujuan['alamat']; ?>
+    </option>
+<?php
+}
+?>
+</select>
+<br><br>
+		  <label for="options">Klasifikasi:</label>
+		  <select id="options" name="klasifikasi">
+<?php while ($row_klasifikasi = mysqli_fetch_array($sql_klasifikasi)){ 
+    $selected = ($row_surat['id_jenis'] == $row_klasifikasi['id']) ? 'selected' : '';
+?> 
+    <option value="<?php echo $row_klasifikasi['id'] ?>" <?php echo $selected; ?>>
         <?php echo $row_klasifikasi['nama'] . "/" . $row_klasifikasi['nomor'] ?>
-    		</option>
-			<?php } ?>		  
-			</select>
-			<br><br>
+    </option>
+<?php } ?>		  
+</select>
+<br><br>
 		  <label for="tgl_berlaku">Tanggal Berlaku: </label>
         <input type="date" id="tgl_berlaku" name="tgl_berlaku" value="<?php echo $row_surat['berlaku_dari'] ?>" required><br><br>
         <label for="tgl_sampai">Berlaku Sampai: </label>

@@ -18,9 +18,9 @@ $id_penerbit = $row_penerbit['id']; //ekstrak id sebagai id_penerbit
 
 //ambil data surat berdasarkan id_penerbit, untuk menampilkan surat dari penerbit yang login
 if ($row_level['level'] != 2){
-	$sql_suratuser = mysqli_query($conn, "SELECT surat.id, surat.berlaku_dari, surat.berlaku_sampai, surat.detail, surat.status, klasifikasi.nama AS jenis, klasifikasi.nomor FROM surat INNER JOIN  klasifikasi ON surat.id_jenis = klasifikasi.id WHERE surat.id_penerbit = $id_penerbit");	
+	$sql_suratuser = mysqli_query($conn, "SELECT `tujuan`.`alamat`, `tujuan`.`orang`, `tujuan`.`jabatan`, `tujuan`.`institusi`, `surat`.*, `klasifikasi`.`nama`, `klasifikasi`.`nomor` FROM `tujuan`  LEFT JOIN `surat` ON `surat`.`id_tujuan` = `tujuan`.`id` LEFT JOIN `klasifikasi` ON `surat`.`id_jenis` = `klasifikasi`.`id` WHERE `surat`.`id_penerbit` = '$id_penerbit';");	
 } else {
-	$sql_suratuser = mysqli_query($conn, "SELECT surat.id, surat.berlaku_dari, surat.berlaku_sampai, surat.detail, surat.status, klasifikasi.nama AS jenis, klasifikasi.nomor FROM surat INNER JOIN  klasifikasi ON surat.id_jenis = klasifikasi.id");
+	$sql_suratuser = mysqli_query($conn, "SELECT `tujuan`.`alamat`, `tujuan`.`orang`, `tujuan`.`jabatan`, `tujuan`.`institusi`, `surat`.*, `klasifikasi`.`nama`, `klasifikasi`.`nomor` FROM `tujuan`  LEFT JOIN `surat` ON `surat`.`id_tujuan` = `tujuan`.`id` LEFT JOIN `klasifikasi` ON `surat`.`id_jenis` = `klasifikasi`.`id`");	
 }
 //$row_suratuser = mysqli_fetch_array($sql_suratuser);
 
@@ -140,6 +140,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     	  <a href="input_letter.php?id=<?php echo $id_penerbit;?>">Tambahkan Surat</a><br> 	  
     	  <table>		  		
 		  		<tr>
+				  	<th>Institusi</th>
+					<th>Penerima</th>
+					<th>Jabatan</th>
+					<th>Alamat</th>
 					<th>Berlaku Dari</th>
 					<th>Berlaku Sampai</th>
 					<th>Detail</th>
@@ -154,11 +158,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 				while ($row_suratuser = mysqli_fetch_array($sql_suratuser)) {
 				?>
     	  		<tr>
+				  	<td><?php echo $row_suratuser['institusi']?></td>
+					<td><?php echo $row_suratuser['orang']?></td>
+					<td><?php echo $row_suratuser['jabatan']?></td>
+					<td><?php echo $row_suratuser['alamat']?></td>
 					<td><?php echo $row_suratuser['berlaku_dari']?></td>
 					<td><?php echo $row_suratuser['berlaku_sampai']?></td>
 					<td><?php echo $row_suratuser['detail']?></td>
 					<td><?php echo $row_suratuser['status'] == 1 ? 'Disetujui' : 'Belum Disetujui' ?></td>
-					<td><?php echo $row_suratuser['jenis']?></td>
+					<td><?php echo $row_suratuser['nama']?></td> <!--nama klasifikasi-->
 					<td><?php echo $row_suratuser['nomor']?></td>
 					<td>
 					    <?php if ($row_level['level'] == 2){ ?>
