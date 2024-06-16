@@ -1,3 +1,5 @@
+Dibuat untuk memenuhi tugas "projek" mata kuliah MPL kelas 6M.
+
 Login for testing:
  - Username:**Password** for Level
  - user:**user** for user/0
